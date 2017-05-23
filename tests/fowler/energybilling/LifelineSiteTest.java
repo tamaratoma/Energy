@@ -107,7 +107,66 @@ public class LifelineSiteTest {
 	}
 
 
+	@Test //from the text (but value was 4.79)
+	public void testAddReading_99() {
+
+		subject.addReading(new Reading (100, getCal(97,0,1)));
+		subject.addReading(new Reading (199, getCal(97,1,1)));
+		
+		assertEquals (new Dollars(1.81).getAmount(), subject.charge().getAmount());
+		}
 	
+
+	@Test //from the text (but value was 4.91)
+	public void testAddReading_101() {
+		
+		subject.addReading(new Reading(1000, getCal(97,0,1)));
+		subject.addReading(new Reading(1101, getCal(97,1,1)));
+
+		assertEquals(new Dollars(1.84).getAmount(), subject.charge()
+				.getAmount());
+	}
+	
+	@Test //from the text (but value was 11.6)
+	public void testAddReading_199() {
+
+		subject.addReading(new Reading (10000, getCal(97,0,1)));
+		subject.addReading(new Reading (10199, getCal(97,1,1)));
+		
+		assertEquals (new Dollars(3.65).getAmount(), subject.charge().getAmount());
+		}
+
+	@Test //from the text (but value was 11.68)
+	public void testAddReading_200() {
+
+		subject.addReading(new Reading(0, getCal(97,0,1)));
+		subject.addReading(new Reading(200, getCal(97,1,1)));
+
+		assertEquals(new Dollars(3.67).getAmount(), subject.charge()
+				.getAmount());
+	}
+	
+	
+
+	@Test //from the text (but value was 11.77)
+	public void testAddReading_201() {
+
+		subject.addReading(new Reading(50, getCal(97,0,1)));
+		subject.addReading(new Reading(251, getCal(97,1,1)));
+
+		assertEquals(new Dollars(3.75).getAmount(), subject.charge().getAmount());
+	}
+
+	@Test
+	public void testAddReading_Max() {
+
+		subject.addReading(new Reading(0, getCal(97,0,1)));
+		subject.addReading(new Reading(Integer.MAX_VALUE,
+				getCal(97,1,1)));
+
+		assertEquals(new Dollars(2.147483647E7).getAmount(), subject.charge()
+				.getAmount());
+	}
 	
 	@After
 	public void tearDown() throws Exception {

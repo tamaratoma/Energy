@@ -23,7 +23,7 @@ public class Zone {
 		return this;
 	}
 	public static Zone get (String name) {
-		return (Zone) Registry.get(name);
+		return Registry.get(name);
 	}
 	public Calendar getSummerEnd() {
 		return summerEnd;
