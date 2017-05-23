@@ -2,23 +2,23 @@ package fowler.energybilling;
 
 import java.util.Calendar;
 
-public class ResidentialSite {
+public class ResidentialSite extends Site{
 
 	private Reading[] _readings = new Reading[1000];
 	private static final double TAX_RATE = 0.05;
 	private Zone _zone;
 
 	ResidentialSite(Zone zone) {
-		_zone = zone;
+		super(zone);
 	}
 
-	public void addReading(Reading newReading) {
-		// add reading to end of array
-		int i = 0;
-		while (_readings[i] != null)
-			i++;
-		_readings[i] = newReading;
-	}
+//	public void addReading(Reading newReading) {
+//		// add reading to end of array
+//		int i = 0;
+//		while (_readings[i] != null)
+//			i++;
+//		_readings[i] = newReading;
+//	}
 
 	public Dollars charge() {
 		// find last reading

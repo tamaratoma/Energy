@@ -2,7 +2,7 @@ package fowler.energybilling;
 
 import java.util.Calendar;
 
-public class DisabilitySite {
+public class DisabilitySite extends Site{
 	private Reading[] _readings = new Reading[1000];
 	private static final Dollars FUEL_TAX_CAP = new Dollars(0.10);
 	private static final double TAX_RATE = 0.05;
@@ -10,15 +10,15 @@ public class DisabilitySite {
 	private static final int CAP = 200;
 
 	public DisabilitySite(Zone zone) {
-		this._zone = zone;
+		super(zone);
 
 	}
 
-	public void addReading(Reading newReading) {
-		int i;
-		for (i = 0; _readings[i] != null; i++);
-		_readings[i] = newReading;
-	}
+//	public void addReading(Reading newReading) {
+//		int i;
+//		for (i = 0; _readings[i] != null; i++);
+//		_readings[i] = newReading;
+//	}
 
 	// JK: usage and date calculation seem to be ok
 	public Dollars charge() {
