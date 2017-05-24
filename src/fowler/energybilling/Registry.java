@@ -21,7 +21,7 @@ public class Registry {
 		return zones.get(name);
 	}
 	
-	public static Boolean isEmpty(){
+	public static boolean isEmpty(){
 		return zones.isEmpty();
 	}
 	

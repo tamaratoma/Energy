@@ -40,16 +40,15 @@ public class ResidentialSite extends Site {
 
 	protected Dollars charge(Calendar start, Calendar end) {
 		Dollars result;
-		result = baseCharge(start, end);
+		result = baseCharge();
 		result = result.plus(taxes(result));
 		result = result.plus(fuelCharge());
 		result = result.plus(fuelChargeTaxes());
 		return result;
 	}
 
-	protected Dollars baseCharge(Calendar start, Calendar end) {
-		return new Dollars((lastUsage() * _zone.getSummerRate() * summerFraction(start, end))
-				+ (lastUsage() * _zone.getWinterRate() * (1 - summerFraction(start, end))));
+	protected Dollars baseCharge() {
+		return _zone.baseCharge(lastUsage(), lastPeriod());
 	}
 
 	protected Dollars fuelChargeTaxes() {
@@ -79,62 +78,18 @@ public class ResidentialSite extends Site {
 		return summerFraction;
 	}
 
-	int dayOfYear(Calendar arg) {
-		int result;
-		switch (arg.get(Calendar.MONTH)) {
-		case 0:
-			result = 0;
-			break;
-		case 1:
-			result = 31;
-			break;
-		case 2:
-			result = 59;
-			break;
-		case 3:
-			result = 90;
-			break;
-		case 4:
-			result = 120;
-			break;
-		case 5:
-			result = 151;
-			break;
-		case 6:
-			result = 181;
-			break;
-		case 7:
-			result = 212;
-			break;
-		case 8:
-			result = 243;
-			break;
-		case 9:
-			result = 273;
-			break;
-		case 10:
-			result = 304;
-			break;
-		case 11:
-			result = 334;
-			break;
-		default:
-			throw new IllegalArgumentException();
-		}
-		;
-		result += arg.get(Calendar.DAY_OF_MONTH);
-		// check leap year
-		if ((arg.get(Calendar.YEAR) % 4 == 0)
-				&& ((arg.get(Calendar.YEAR) % 100 != 0) || ((arg.get(Calendar.YEAR) + 1900) % 400 == 0))) {
-			result++;
-		}
-		;
-		return result;
-	}
+	/*
+	 * int dayOfYear(Calendar arg) { int result; switch
+	 * (arg.get(Calendar.MONTH)) { case 0: result = 0; break; case 1: result =
+	 * 31; break; case 2: result = 59; break; case 3: result = 90; break; case
+	 * 4: result = 120; break; case 5: result = 151; break; case 6: result =
+	 * 181; break; case 7: result = 212; break; case 8: result = 243; break;
+	 * case 9: result = 273; break; case 10: result = 304; break; case 11:
+	 * result = 334; break; default: throw new IllegalArgumentException(); } ;
+	 * result += arg.get(Calendar.DAY_OF_MONTH); // check leap year if
+	 * ((arg.get(Calendar.YEAR) % 4 == 0) && ((arg.get(Calendar.YEAR) % 100 !=
+	 * 0) || ((arg.get(Calendar.YEAR) + 1900) % 400 == 0))) { result++; } ;
+	 * return result; }
+	 */
 
-	@Override
-	int dayOfYear(Date arg) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 }
