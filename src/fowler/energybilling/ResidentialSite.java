@@ -1,8 +1,9 @@
 package fowler.energybilling;
 
 import java.util.Calendar;
+import java.util.Date;
 
-public class ResidentialSite extends Site{
+public class ResidentialSite extends Site {
 
 	private Reading[] _readings = new Reading[1000];
 	private static final double TAX_RATE = 0.05;
@@ -12,66 +13,70 @@ public class ResidentialSite extends Site{
 		super(zone);
 	}
 
-//	public void addReading(Reading newReading) {
-//		// add reading to end of array
-//		int i = 0;
-//		while (_readings[i] != null)
-//			i++;
-//		_readings[i] = newReading;
-//	}
+	// public void addReading(Reading newReading) {
+	// // add reading to end of array
+	// int i = 0;
+	// while (_readings[i] != null)
+	// i++;
+	// _readings[i] = newReading;
+	// }
+
+	/*
+	 * public Dollars charge() { // find last reading int i = 0; while
+	 * (_readings[i] != null) i++;
+	 * 
+	 * int usage = _readings[i - 1].amount() - _readings[i - 2].amount();
+	 * Calendar end = _readings[i - 1].date(); Calendar start = _readings[i -
+	 * 2].date(); start.set(Calendar.DAY_OF_MONTH,
+	 * (start.get(Calendar.DAY_OF_MONTH) + 1)); // set // to // beginning // of
+	 * // period return charge(usage, start, end); }
+	 */
 
 	public Dollars charge() {
-		// find last reading
-		int i = 0;
-		while (_readings[i] != null)
-			i++;
-		
-		int usage = _readings[i - 1].amount() - _readings[i - 2].amount();
-		Calendar end = _readings[i - 1].date();
-		Calendar start = _readings[i - 2].date();
-		start.set(Calendar.DAY_OF_MONTH, (start.get(Calendar.DAY_OF_MONTH) + 1)); // set to beginning of period
-		return charge(usage, start, end);
+		Calendar end = lastReading().date();
+		Calendar start = nextDay(previousReading().date());
+		return charge(start, end);
 	}
 
-	private Dollars charge(int usage, Calendar start, Calendar end) {
+	protected Dollars charge(Calendar start, Calendar end) {
 		Dollars result;
+		result = baseCharge(start, end);
+		result = result.plus(taxes(result));
+		result = result.plus(fuelCharge());
+		result = result.plus(fuelChargeTaxes());
+		return result;
+	}
+
+	protected Dollars baseCharge(Calendar start, Calendar end) {
+		return new Dollars((lastUsage() * _zone.getSummerRate() * summerFraction(start, end))
+				+ (lastUsage() * _zone.getWinterRate() * (1 - summerFraction(start, end))));
+	}
+
+	protected Dollars fuelChargeTaxes() {
+		return new Dollars(fuelCharge().times(TAX_RATE));
+	}
+
+	private double summerFraction(Calendar start, Calendar end) {
 		double summerFraction;
-		// Find out how much of period is in the summer
 		if (start.after(_zone.getSummerEnd()) || end.before(_zone.getSummerStart()))
 			summerFraction = 0;
-		else if (!start.before(_zone.getSummerStart())
-				&& !start.after(_zone.getSummerEnd())
-				&& !end.before(_zone.getSummerStart())
-				&& !end.after(_zone.getSummerEnd()))
+		else if (!start.before(_zone.getSummerStart()) && !start.after(_zone.getSummerEnd())
+				&& !end.before(_zone.getSummerStart()) && !end.after(_zone.getSummerEnd()))
 			summerFraction = 1;
 		else { // part in summer part in winter
 			double summerDays;
-			if (start.before(_zone.getSummerStart())
-					|| start.after(_zone.getSummerEnd())) {
+			if (start.before(_zone.getSummerStart()) || start.after(_zone.getSummerEnd())) {
 				// end is in the summer
-				summerDays = dayOfYear(end) - dayOfYear(_zone.getSummerStart())
-						+ 1;
+				summerDays = dayOfYear(end) - dayOfYear(_zone.getSummerStart()) + 1;
 			} else {
 				// start is in summer
-				summerDays = dayOfYear(_zone.getSummerEnd()) - dayOfYear(start)
-						+ 1;
+				summerDays = dayOfYear(_zone.getSummerEnd()) - dayOfYear(start) + 1;
 			}
 			;
-			summerFraction = summerDays
-					/ (dayOfYear(end) - dayOfYear(start) + 1);
+			summerFraction = summerDays / (dayOfYear(end) - dayOfYear(start) + 1);
 		}
 		;
-
-		result = new Dollars((usage * _zone.getSummerRate() * summerFraction)
-				+ (usage * _zone.getWinterRate() * (1 - summerFraction)));
-		
-		
-		result = result.plus(new Dollars(result.times(TAX_RATE))); 
-		
-		Dollars fuel = new Dollars(usage * 0.0175);
-		result = result.plus(fuel);	
-		result = new Dollars(result.plus(fuel.times(TAX_RATE))); 
-		return result;
+		return summerFraction;
 	}
 
 	int dayOfYear(Calendar arg) {
@@ -113,16 +118,23 @@ public class ResidentialSite extends Site{
 		case 11:
 			result = 334;
 			break;
-		default :
+		default:
 			throw new IllegalArgumentException();
-		};
+		}
+		;
 		result += arg.get(Calendar.DAY_OF_MONTH);
-		//check leap year
-		if ((arg.get(Calendar.YEAR)%4 == 0) && ((arg.get(Calendar.YEAR) % 100 != 0) ||
-				((arg.get(Calendar.YEAR) + 1900) % 400 == 0)))
-		{
+		// check leap year
+		if ((arg.get(Calendar.YEAR) % 4 == 0)
+				&& ((arg.get(Calendar.YEAR) % 100 != 0) || ((arg.get(Calendar.YEAR) + 1900) % 400 == 0))) {
 			result++;
-		};
+		}
+		;
 		return result;
+	}
+
+	@Override
+	int dayOfYear(Date arg) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
