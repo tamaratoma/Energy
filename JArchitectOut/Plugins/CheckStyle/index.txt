@@ -1,0 +1,9 @@
+C:\Users\Tam\Google Drive\hslu\saqt\testat\FowlersEnergyExample\Energy\src\fowler\energybilling\BusinessSite.java=778180850
+C:\Users\Tam\Google Drive\hslu\saqt\testat\FowlersEnergyExample\Energy\src\fowler\energybilling\Reading.java=89219093
+C:\Users\Tam\Google Drive\hslu\saqt\testat\FowlersEnergyExample\Energy\src\fowler\energybilling\DisabilitySite.java=2647340907
+C:\Users\Tam\Google Drive\hslu\saqt\testat\FowlersEnergyExample\Energy\src\fowler\energybilling\Dollars.java=535399301
+C:\Users\Tam\Google Drive\hslu\saqt\testat\FowlersEnergyExample\Energy\src\fowler\energybilling\Zone.java=1826598279
+C:\Users\Tam\Google Drive\hslu\saqt\testat\FowlersEnergyExample\Energy\tests\fowler\energybilling\EnergyBillingTests.java=3580942201
+C:\Users\Tam\Google Drive\hslu\saqt\testat\FowlersEnergyExample\Energy\src\fowler\energybilling\LifelineSite.java=1881225325
+C:\Users\Tam\Google Drive\hslu\saqt\testat\FowlersEnergyExample\Energy\src\fowler\energybilling\Registry.java=3676596414
+C:\Users\Tam\Google Drive\hslu\saqt\testat\FowlersEnergyExample\Energy\src\fowler\energybilling\ResidentialSite.java=2012682208
