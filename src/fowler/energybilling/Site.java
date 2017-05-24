@@ -8,7 +8,7 @@ public abstract class Site {
 	protected Zone _zone;
 	protected Reading[] readings = new Reading[1000];
 
-	abstract int dayOfYear(Date arg);
+	// abstract int dayOfYear(Calendar arg);
 
 	protected Dollars taxes(Dollars arg) {
 		return new Dollars(arg.times(TAX_RATE));
@@ -33,30 +33,46 @@ public abstract class Site {
 		return i;
 	}
 
-	protected Dollars charge(Calendar start, Calendar end) {
-		Dollars result;
-		result = baseCharge(start, end);
-		result = result.plus(taxes(result));
-		result = result.plus(fuelCharge());
-		result = result.plus(fuelChargeTaxes());
-		return result;
+	public Dollars charge() {
+		return baseCharge().plus(taxes()).plus(fuelCharge()).plus(fuelChargeTaxes());
 	}
 
-	abstract protected Dollars baseCharge(Calendar start, Calendar end);
+	protected Dollars taxes() {
+		return new Dollars(baseCharge().times(TAX_RATE));
+	}
+
+	abstract protected Dollars baseCharge();
 
 	abstract protected Dollars fuelChargeTaxes();
 
-	public Dollars charge() {
-		Calendar end = lastReading().date();
-		Calendar start = nextDay(previousReading().date());
-		return charge(start, end);
-	}
+	/*
+	 * public Dollars charge() { Calendar end = lastReading().date(); Calendar
+	 * start = nextDay(previousReading().date()); return charge(start, end); }
+	 */
+
+	/*
+	 * private Date nextDay (Date arg) { // foreign method - should be in Date
+	 * Date result = new Date (arg.getTime()) ; result.setDate(result.getDate()
+	 * + 1); return result; }
+	 */
 
 	protected Calendar nextDay(Calendar arg) {
 		// foreign method - should be in Date
 		Calendar result = Calendar.getInstance();
 		result.setTime(arg.getTime());
 		result.add(Calendar.DATE, 1);
+		return result;
+	}
+
+	Dollars residentialBaseCharge(int usage) {
+		return new Dollars((usage * _zone.getSummerRate() * summerFraction())
+				+ (usage * _zone.getWinterRate() * (1 - summerFraction())));
+	}
+
+	private MfDate nextDay(MfDate arg) {
+		// foreign method - should be on Date
+		MfDate result = arg.copy();
+		result.setDate(result.getDate() + 1);
 		return result;
 	}
 
@@ -82,4 +98,18 @@ public abstract class Site {
 	protected Dollars fuelCharge() {
 		return new Dollars(lastUsage() * 0.0175);
 	}
+
+	public DateRange lastPeriod() {
+		return new DateRange(previousReading().date().nextDay(), lastReading().date());
+	}
+
+	protected double summerFraction() {
+		DateRange periodInSummer = lastPeriod().intersection(_zone.summer());
+		return (double) periodInSummer.length() / lastPeriod().length();
+	}
+
+	protected boolean isLastPeriodOutsideSummer() {
+		return lastPeriod().start().after(_zone.summer().end()) || lastPeriod().end().before(_zone.summer().start());
+	}
+
 }
