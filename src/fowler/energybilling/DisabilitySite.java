@@ -33,6 +33,7 @@ public class DisabilitySite extends Site {
 	 * end); }
 	 */
 
+	@Override
 	protected Dollars charge() {
 		Dollars result;
 		result = baseCharge();
@@ -42,6 +43,7 @@ public class DisabilitySite extends Site {
 		return result;
 	}
 
+	@Override
 	protected Dollars baseCharge() {
 		Dollars result;
 		result = _zone.baseCharge(usageBelowCap(), lastPeriod());
@@ -59,6 +61,7 @@ public class DisabilitySite extends Site {
 		return Math.min(lastUsage(), CAP);
 	}
 
+	@Override
 	protected Dollars fuelChargeTaxes() {
 		return new Dollars(fuelCharge().times(TAX_RATE).min(FUEL_TAX_CAP));
 	}

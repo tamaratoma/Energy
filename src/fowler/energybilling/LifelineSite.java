@@ -8,6 +8,7 @@ public class LifelineSite extends Site {
 		super(null);
 	};
 
+	@Override
 	public void addReading(Reading newReading) {
 		Reading[] newArray = new Reading[_readings.length + 1];
 		System.arraycopy(_readings, 0, newArray, 1, _readings.length);
@@ -15,6 +16,7 @@ public class LifelineSite extends Site {
 		_readings = newArray;
 	}
 
+	@Override
 	public Dollars charge() {
 		int usage = lastReading().amount() - previousReading().amount();
 		return charge(usage);
@@ -27,10 +29,12 @@ public class LifelineSite extends Site {
 		return result.plus(fuelChargeTaxes());
 	}
 
+	@Override
 	protected Dollars taxes(Dollars base) {
 		return new Dollars(baseCharge().minus(new Dollars(8)).max(new Dollars(0)).times(TAX_RATE));
 	}
 
+	@Override
 	protected Dollars baseCharge() {
 		double result = usageInRange(0, 100) * 0.03;
 		result += usageInRange(100, 200) * 0.05;
@@ -45,6 +49,7 @@ public class LifelineSite extends Site {
 			return 0;
 	}
 
+	@Override
 	protected Dollars fuelChargeTaxes() {
 		throw new AbstractMethodError("undefined fuelChargeTaxes");
 	}

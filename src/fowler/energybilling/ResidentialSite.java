@@ -32,6 +32,7 @@ public class ResidentialSite extends Site {
 	 * // period return charge(usage, start, end); }
 	 */
 
+	@Override
 	public Dollars charge() {
 		Calendar end = lastReading().date();
 		Calendar start = nextDay(previousReading().date());
@@ -47,10 +48,12 @@ public class ResidentialSite extends Site {
 		return result;
 	}
 
+	@Override
 	protected Dollars baseCharge() {
 		return _zone.baseCharge(lastUsage(), lastPeriod());
 	}
 
+	@Override
 	protected Dollars fuelChargeTaxes() {
 		return new Dollars(fuelCharge().times(TAX_RATE));
 	}

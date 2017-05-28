@@ -8,7 +8,6 @@ import java.util.Calendar;
 import org.junit.*;
 
 import fowler.energybilling.BusinessSite;
-import fowler.energybilling.DisabilitySite;
 import fowler.energybilling.Dollars;
 import fowler.energybilling.LifelineSite;
 import fowler.energybilling.Reading;

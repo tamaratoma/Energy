@@ -12,6 +12,7 @@ public class MfDate implements Cloneable {
 	 * public MfDate(String dateString) { super(dateString); };
 	 */
 
+	@Override
 	public Object clone() {
 		try {
 			return super.clone();
