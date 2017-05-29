@@ -1,6 +1,12 @@
 package fowler.energybilling;
 
-public class BusinessSite {
+public class BusinessSite extends Site {
+
+	BusinessSite(Zone zone) {
+		super(zone);
+		// TODO Auto-generated constructor stub
+	}
+
 	private int lastReading;
 	private Reading[] _readings = new Reading[1000];
 	private static final double START_RATE = 0.09;
@@ -11,34 +17,50 @@ public class BusinessSite {
 		_readings[++lastReading] = newReading;
 	}
 
-	public Dollars charge() {
-		int usage = _readings[lastReading].amount()
-				- _readings[lastReading - 1].amount();
-		return charge(usage);
-	}
-
 	private Dollars charge(int usage) {
-		Dollars result;
-		if (usage == 0)
-			return new Dollars(0);
-		double t1 = START_RATE - ((END_RATE * END_AMOUNT) - START_RATE)
-				/ (END_AMOUNT - 1);
-		double t2 = ((END_RATE * END_AMOUNT) - START_RATE)
-				* Math.min(END_AMOUNT, usage) / (END_AMOUNT - 1);
-		double t3 = Math.max(usage - END_AMOUNT, 0) * END_RATE;
-		result = new Dollars(t1 + t2 + t3);
-		result = result.plus(new Dollars(usage * 0.0175));
-		Dollars base = new Dollars(result.min(new Dollars(50)).times(0.07));
-		if (result.isGreaterThan(new Dollars(50))) {
-			base = new Dollars(base.plus(result.min(new Dollars(75))
-					.minus(new Dollars(50)).times(0.06)));
-		}
-		if (result.isGreaterThan(new Dollars(75))) {
-			base = new Dollars(base.plus(result.minus(new Dollars(75)).times(
-					0.05)));
-		}
-		result = result.plus(base);
+		Dollars result = baseCharge();
+		result = result.plus(fuelCharge());
+		result = result.plus(taxes());
 		return result;
 	}
 
+	protected Dollars baseCharge() {
+		if (lastUsage() == 0)
+			return new Dollars(0);
+		double constant = START_RATE - belowLimitRate();
+		double chargeBelowLimit = usageBelowLimit() * belowLimitRate();
+		double chargeAboveLimit = usageAboveLimit() * END_RATE;
+		return new Dollars(constant + chargeBelowLimit + chargeAboveLimit);
+	}
+
+	protected static double belowLimitRate() {
+		return ((END_RATE * END_AMOUNT) - START_RATE) / (END_AMOUNT - 1);
+	}
+
+	protected int usageAboveLimit() {
+		return Math.max(lastUsage() - END_AMOUNT, 0);
+	}
+
+	protected int usageBelowLimit() {
+		return Math.min(END_AMOUNT, lastUsage());
+	}
+
+	protected Dollars taxes() {
+		return new Dollars(taxTable().value((int) taxable().getAmount()));
+	}
+
+	protected Dollars taxable() {
+		return baseCharge().plus(fuelCharge());
+	}
+
+	protected RateTable taxTable() {
+		double[] tableData = { 0.07, 50, 0.06, 75, 0.05 };
+		return new RateTable(tableData);
+	}
+
+	@Override
+	protected Dollars fuelChargeTaxes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

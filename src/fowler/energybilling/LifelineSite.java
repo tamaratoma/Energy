@@ -29,17 +29,24 @@ public class LifelineSite extends Site {
 		return result.plus(fuelChargeTaxes());
 	}
 
-	@Override
 	protected Dollars taxes(Dollars base) {
 		return new Dollars(baseCharge().minus(new Dollars(8)).max(new Dollars(0)).times(TAX_RATE));
 	}
 
 	@Override
 	protected Dollars baseCharge() {
-		double result = usageInRange(0, 100) * 0.03;
-		result += usageInRange(100, 200) * 0.05;
-		result += usageInRange(200, Integer.MAX_VALUE) * 0.07;
-		return new Dollars(result);
+		return new Dollars(baseChargeTable().value(lastUsage()));
+	}
+	protected RateTable baseChargeTable() {
+		double [] tableData = { 0.03, 100,
+				0.05, 200,
+				0.07};
+				return new RateTable (tableData);
+				
+	}
+
+	protected int usageUnder(int limit) {
+		return Math.min(lastUsage(), limit);
 	}
 
 	protected int usageInRange(int start, int end) {

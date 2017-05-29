@@ -2,16 +2,26 @@ package fowler.energybilling;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Vector;
 
 public abstract class Site {
 
 	protected Zone _zone;
-	protected Reading[] readings = new Reading[1000];
-
+	private Vector _readings = new Vector();
 	// abstract int dayOfYear(Calendar arg);
 
-	protected Dollars taxes(Dollars arg) {
-		return new Dollars(arg.times(TAX_RATE));
+	protected Dollars taxes() {
+		Dollars taxable = baseCharge().plus(fuelCharge());
+		Dollars result = new Dollars(taxable.min(new Dollars(50)).times(0.07));
+		if (taxable.isGreaterThan(new Dollars(50))) {
+			result = new Dollars(result.plus(taxable.min(new Dollars(75)).minus(new Dollars(50)).times(0.06)));
+		}
+		;
+		if (taxable.isGreaterThan(new Dollars(75))) {
+			result = new Dollars(result.plus(taxable.minus(new Dollars(75)).times(0.05)));
+		}
+		;
+		return result;
 	}
 
 	protected static final double TAX_RATE = 0.05;
@@ -20,28 +30,39 @@ public abstract class Site {
 		_zone = zone;
 	}
 
-	public void addReading(Reading newReading) {
-
-		readings[firstUnusedReadingsIndex()] = newReading;
-	}
-
 	private int firstUnusedReadingsIndex() {
-		int i = 0;
-		while (readings[i] != null) {
-			i++;
-		}
-		return i;
+		return _readings.size();
 	}
 
-	protected Dollars charge() {
-		return baseCharge().plus(taxes()).plus(fuelCharge()).plus(fuelChargeTaxes());
+	protected int lastUsage() {
+		return lastReading().amount() - previousReading().amount();
 	}
 
-	protected Dollars taxes() {
-		return new Dollars(baseCharge().times(TAX_RATE));
+	public Reading lastReading() {
+		return (Reading) _readings.lastElement();
 	}
 
-	abstract protected Dollars baseCharge();
+	public Reading previousReading() {
+		return (Reading) _readings.elementAt(_readings.size() - 2);
+	}
+
+	public Dollars charge() {
+		return baseCharge().plus(fuelCharge()).plus(taxes());
+	}
+
+	protected Dollars baseCharge() {
+		double result = usageInRange(0, 100) * 0.03;
+		result += usageInRange(100, 200) * 0.05;
+		result += usageInRange(200, Integer.MAX_VALUE) * 0.07;
+		return new Dollars(result);
+	}
+
+	protected int usageInRange(int start, int end) {
+		if (lastUsage() > start)
+			return Math.min(lastUsage(), end) - start;
+		else
+			return 0;
+	}
 
 	abstract protected Dollars fuelChargeTaxes();
 
@@ -76,18 +97,6 @@ public abstract class Site {
 		return result;
 	}
 
-	protected int lastUsage() {
-		return lastReading().amount() - previousReading().amount();
-	};
-
-	protected Reading previousReading() {
-		return readings[firstUnusedReadingsIndex() - 2];
-	}
-
-	protected Reading lastReading() {
-		return readings[firstUnusedReadingsIndex() - 1];
-	};
-
 	protected static final double FUEL_CHARGE_RATE = 0.0175;
 
 	/*
@@ -100,7 +109,9 @@ public abstract class Site {
 	}
 
 	public DateRange lastPeriod() {
-		return new DateRange(previousReading().date().nextDay(), lastReading().date());
+		Calendar calendar = previousReading().date();
+		calendar.add(Calendar.DATE, 1);
+		return new DateRange(calendar, lastReading().date());
 	}
 
 	protected double summerFraction() {
@@ -115,6 +126,17 @@ public abstract class Site {
 	protected int dayOfYear(Calendar end) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	/*
+	 * public void addReading(Reading newReading) throws
+	 * IncorrectReadingException { if (isNotLatestReading(newReading)) throw new
+	 * IncorrectReadingException("Reading is before previous reading");
+	 * _readings.addElement(newReading); }
+	 */
+
+	private boolean isNotLatestReading(Reading arg) {
+		return !_readings.isEmpty() && arg.date().before(lastReading().date());
 	}
 
 }

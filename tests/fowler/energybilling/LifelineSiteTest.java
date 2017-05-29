@@ -48,6 +48,13 @@ public class LifelineSiteTest {
 
 	}
 
+	/*
+	 * void testIncorrectReading() throws Exception { _subject.addReading(new
+	 * Reading(25, new MfDate("8 Sep 1997"))); try { _subject.addReading(new
+	 * Reading(125, new MfDate("1 Sep 1997"))); assert (false); } catch
+	 * (IncorrectReadingException e) { } }
+	 */
+
 	@Test
 	public void testDollars() {
 		Dollars d1 = new Dollars(5.0);

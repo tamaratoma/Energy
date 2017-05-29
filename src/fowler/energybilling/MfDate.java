@@ -31,9 +31,6 @@ public class MfDate implements Cloneable {
 		return result;
 	}
 
-	
-	
-
 	public static MfDate earliest(MfDate arg1, MfDate arg2) {
 		return (arg1.before(arg2)) ? arg1 : arg2;
 	}
@@ -44,8 +41,9 @@ public class MfDate implements Cloneable {
 
 	int dayOfYear() {
 		int result = daysToStartOfMonth() + getDate();
-		if (isLeapYear() & this.after(new Date(getYear(), 1, 29)))
+		if (isLeapYear() & this.after(new MfDate())) {
 			result++;
+		}
 		return result;
 	}
 
@@ -56,6 +54,11 @@ public class MfDate implements Cloneable {
 	private int daysToStartOfMonth() {
 		int[] monthNumbers = { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
 		return monthNumbers[getMonth()];
+	}
+
+	private int getMonth() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	private void requireSameYear(MfDate arg) {
@@ -81,6 +84,11 @@ public class MfDate implements Cloneable {
 		return result;
 	}
 
+	private int getYear() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 	public boolean before(MfDate arg2) {
 		// TODO Auto-generated method stub
 		return false;
@@ -98,7 +106,7 @@ public class MfDate implements Cloneable {
 
 	public void setDate(int i) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

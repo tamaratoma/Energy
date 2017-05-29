@@ -21,4 +21,14 @@ public class DateRange {
 		return _start;
 	}
 
+	public DateRange intersection(DateRange summer) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public double length() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }
