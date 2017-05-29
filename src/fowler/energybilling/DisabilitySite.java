@@ -89,6 +89,8 @@ public class DisabilitySite extends Site {
 		return summerFraction;
 	}
 
+	
+
 	/*
 	 * int dayOfYear(Calendar arg) { int result; switch
 	 * (arg.get(Calendar.MONTH)) { case 0: result = 0; break; case 1: result =

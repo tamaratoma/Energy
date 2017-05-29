@@ -4,21 +4,21 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class DateRange {
-	
-	private Date _end;
-	private Date _start;
-	
-	public DateRange(Date start, Date end){
+
+	private Calendar _end;
+	private Calendar _start;
+
+	public DateRange(Calendar start, Calendar end) {
 		_start = start;
 		_end = end;
 	}
-	
-	public Date end() {
+
+	public Calendar end() {
 		return _end;
-		}
-		public Date start() {
+	}
+
+	public Calendar start() {
 		return _start;
-		}
-		
+	}
 
 }

@@ -2,7 +2,6 @@ package fowler.energybilling;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.lang.Cloneable;
 
 public class MfDate implements Cloneable {
 
@@ -25,13 +24,15 @@ public class MfDate implements Cloneable {
 	public MfDate copy() {
 		return (MfDate) clone();
 	}
-	
-	
+
 	public MfDate nextDay() {
 		MfDate result = copy();
 		result.setDate(result.getDate() + 1);
 		return result;
 	}
+
+	
+	
 
 	public static MfDate earliest(MfDate arg1, MfDate arg2) {
 		return (arg1.before(arg2)) ? arg1 : arg2;
@@ -78,6 +79,26 @@ public class MfDate implements Cloneable {
 		result -= yearIndex / 100; // non-leap centuries
 		result += dayOfYear() - 1;
 		return result;
+	}
+
+	public boolean before(MfDate arg2) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean after(MfDate arg2) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public int getDate() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public void setDate(int i) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

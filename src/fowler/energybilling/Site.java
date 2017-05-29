@@ -33,7 +33,7 @@ public abstract class Site {
 		return i;
 	}
 
-	public Dollars charge() {
+	protected Dollars charge() {
 		return baseCharge().plus(taxes()).plus(fuelCharge()).plus(fuelChargeTaxes());
 	}
 
@@ -110,6 +110,11 @@ public abstract class Site {
 
 	protected boolean isLastPeriodOutsideSummer() {
 		return lastPeriod().start().after(_zone.summer().end()) || lastPeriod().end().before(_zone.summer().start());
+	}
+
+	protected int dayOfYear(Calendar end) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }
